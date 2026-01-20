@@ -121,7 +121,6 @@ const ChangePasswordModal: React.FC<{ isOpen: boolean, onClose: () => void }> = 
 const StudentPage: React.FC<StudentPageProps> = ({ initialView }) => {
     const { currentUser, logout } = useContext(AuthContext);
     
-    // Fixed: 'savings' | 'funds' typo in array literal
     const validViews: View[] = ['home', 'transfer', 'stocks', 'savings', 'funds'];
     const startView: View = (initialView && validViews.includes(initialView as View)) 
         ? (initialView as View) 
@@ -338,7 +337,7 @@ const HomeView: React.FC<{ account: Account, currentUser: User, refreshAccount: 
         <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <p className="text-gray-500 mb-1 font-medium">내 총 자산</p>
-                <h2 className="text-4xl font-extrabold text-gray-800">{Math.floor(totalAssets).toLocaleString()}<span className="text-2xl ml-1 font-normal text-gray-600">권</span></h2>
+                <h2 className="text-4xl font-extrabold text-gray-800">{Math.floor(totalAssets).toLocaleString()}<span className="text-2xl ml-1 font-normal text-gray-600">원</span></h2>
                 
                 <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-50">
                     <div className="text-center">
@@ -367,7 +366,7 @@ const HomeView: React.FC<{ account: Account, currentUser: User, refreshAccount: 
                                     <span className="text-xs text-gray-500 ml-2">~{new Date(tax.dueDate).toLocaleDateString()}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <span className="font-bold text-red-600">{tax.amount.toLocaleString()}권</span>
+                                    <span className="font-bold text-red-600">{tax.amount.toLocaleString()}원</span>
                                     <button onClick={() => handlePayClick(tax.taxId, tax.amount, tax.name)} className="px-3 py-1 bg-red-600 text-white text-xs rounded-full font-bold hover:bg-red-700 transition-colors">납부</button>
                                 </div>
                             </div>
@@ -405,7 +404,7 @@ const HomeView: React.FC<{ account: Account, currentUser: User, refreshAccount: 
             <ConfirmModal 
                 isOpen={!!taxToPay}
                 title="세금 납부"
-                message={`'${taxToPay?.name}' 세금 ${taxToPay?.amount.toLocaleString()}권을 납부하시겠습니까?`}
+                message={`'${taxToPay?.name}' 세금 ${taxToPay?.amount.toLocaleString()}원을 납부하시겠습니까?`}
                 onConfirm={handleConfirmPayment}
                 onCancel={() => setTaxToPay(null)}
                 confirmText="납부하기"
@@ -426,7 +425,7 @@ const TransferView: React.FC<{ currentUser: User, account: Account, refreshAccou
         if(targetType === 'student' && targetAccountId.length >= 3) {
             const timer = setTimeout(async () => {
                 try {
-                    const fullId = `권쌤은행 ${targetAccountId}`;
+                    const fullId = `민현쌤은행 ${targetAccountId}`;
                     const details = await api.getRecipientDetailsByAccountId(fullId);
                     if(details) {
                         setRecipientInfo({
@@ -454,13 +453,11 @@ const TransferView: React.FC<{ currentUser: User, account: Account, refreshAccou
              if (targetType === 'teacher') {
                 const teacherAcc = await api.getTeacherAccount();
                 if (!teacherAcc) throw new Error("선생님 계좌를 찾을 수 없습니다.");
-                // [수정] teacherAcc.id 전달
-                await api.transfer(currentUser.userId, teacherAcc.accountId, parseInt(amount), memo || '선생님께 송금', teacherAcc.id);
+                await api.transfer(currentUser.userId, teacherAcc.accountId, parseInt(amount), memo || '선생님께 송금', teacherAcc.accountId);
              } else {
-                 const fullId = `권쌤은행 ${targetAccountId}`;
+                 const fullId = `민현쌤은행 ${targetAccountId}`;
                  if(!recipientInfo) throw new Error("받는 사람 정보를 확인할 수 없습니다.");
-                 // [수정] recipientInfo.id 전달
-                 await api.transfer(currentUser.userId, fullId, parseInt(amount), memo || '송금', recipientInfo.id);
+                 await api.transfer(currentUser.userId, fullId, parseInt(amount), memo || '송금', fullId);
              }
              showNotification('success', '송금이 완료되었습니다.');
              setAmount('');
@@ -500,7 +497,7 @@ const TransferView: React.FC<{ currentUser: User, account: Account, refreshAccou
                         <label className="block text-sm font-medium text-gray-700 mb-1">받는 사람 계좌</label>
                         <div className="flex">
                             <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                권쌤은행
+                                민현쌤은행
                             </span>
                             <input 
                                 type="text" 
@@ -537,10 +534,10 @@ const TransferView: React.FC<{ currentUser: User, account: Account, refreshAccou
                             className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-lg"
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-3.5 text-gray-500 font-medium">권</span>
+                        <span className="absolute right-3 top-3.5 text-gray-500 font-medium">원</span>
                     </div>
                     <div className="mt-1 text-xs text-gray-500 text-right">
-                        잔액: {account.balance.toLocaleString()}권
+                        잔액: {account.balance.toLocaleString()}원
                     </div>
                 </div>
 
@@ -603,7 +600,7 @@ const StocksView: React.FC<{ currentUser: User, refreshAccount: () => void, show
                             <div key={s.id} onClick={() => handleStockClick(s)} className="bg-white p-4 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 transition-colors flex justify-between items-center">
                                 <span className="font-bold text-gray-800">{s.name}</span>
                                 <div className="text-right">
-                                    <div className="font-mono font-bold">{Math.round(s.currentPrice).toLocaleString()}권</div>
+                                    <div className="font-mono font-bold">{Math.round(s.currentPrice).toLocaleString()}원</div>
                                 </div>
                             </div>
                         ))}
@@ -631,7 +628,7 @@ const StocksView: React.FC<{ currentUser: User, refreshAccount: () => void, show
                                         </div>
                                         <div className="text-right">
                                             <div className="text-xs text-gray-400">평가금액</div>
-                                            <div className="font-bold">{Math.floor(currentVal).toLocaleString()}권</div>
+                                            <div className="font-bold">{Math.floor(currentVal).toLocaleString()}원</div>
                                         </div>
                                     </div>
                                 </div>
@@ -655,7 +652,7 @@ const StocksView: React.FC<{ currentUser: User, refreshAccount: () => void, show
                                 <LineChart data={history}>
                                     <XAxis dataKey="createdAt" hide />
                                     <YAxis domain={['auto', 'auto']} hide />
-                                    <Tooltip labelFormatter={() => ''} formatter={(val: number) => [`${val}권`, '가격']} />
+                                    <Tooltip labelFormatter={() => ''} formatter={(val: number) => [`${val}원`, '가격']} />
                                     <Line type="monotone" dataKey="price" stroke="#4F46E5" strokeWidth={2} dot={false} />
                                 </LineChart>
                             </ResponsiveContainer>
@@ -664,7 +661,7 @@ const StocksView: React.FC<{ currentUser: User, refreshAccount: () => void, show
                         <div className="p-4 bg-white border-t">
                             <div className="flex justify-between items-center mb-6">
                                 <span className="text-gray-500">현재가</span>
-                                <span className="text-2xl font-bold">{Math.round(selectedStock.currentPrice).toLocaleString()}권</span>
+                                <span className="text-2xl font-bold">{Math.round(selectedStock.currentPrice).toLocaleString()}원</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <button 
@@ -711,11 +708,24 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
     const [showConfirm, setShowConfirm] = useState(false);
 
     const calcFee = useMemo(() => {
-        // 매수 시: 실제 가격 * 수량의 올림 처리
-        if (mode === 'buy') return { rate: 0, amount: 0, final: Math.ceil(stock.currentPrice * quantity), execPrice: stock.currentPrice };
-
         const volatility = stock.volatility || 0.01;
         const oldPrice = stock.currentPrice;
+
+        // 매수 시: 가격 상승 공식 적용 (지수 성장 모델)
+        if (mode === 'buy') {
+            const newPrice = oldPrice * Math.exp(volatility * quantity);
+            const execPrice = (oldPrice + newPrice) / 2;
+            const finalAmount = Math.ceil(execPrice * quantity);
+            
+            return { 
+                rate: 0, 
+                amount: 0, 
+                final: finalAmount, 
+                execPrice: execPrice,
+                newPrice: newPrice
+            };
+        }
+
         // 매도 시: 가격 하락 후 평균 체결가에서 수수료 제외 및 버림 처리
         const newPrice = Math.max(1, oldPrice * Math.exp(-volatility * quantity));
         const execPrice = (oldPrice + newPrice) / 2;
@@ -733,7 +743,8 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
             rate: parseFloat(feeRate.toFixed(1)),
             amount: feeAmount,
             final: finalAmount,
-            execPrice: execPrice
+            execPrice: execPrice,
+            newPrice: newPrice
         };
     }, [mode, stock, quantity]);
     
@@ -776,7 +787,7 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
                         </div>
                         <div className="border-t pt-4 flex justify-between">
                             <span className="text-gray-500">체결 예상가</span>
-                            <span className="font-bold">{calcFee.execPrice.toFixed(2)}권</span>
+                            <span className="font-bold">{calcFee.execPrice.toFixed(2)}원</span>
                         </div>
                         {mode === 'sell' && (
                             <>
@@ -786,13 +797,13 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
                                 </div>
                                 <div className="flex justify-between text-xs">
                                     <span className="text-gray-500">수수료 금액</span>
-                                    <span className="font-bold text-red-500">-{calcFee.amount.toLocaleString()}권</span>
+                                    <span className="font-bold text-red-500">-{calcFee.amount.toLocaleString()}원</span>
                                 </div>
                             </>
                         )}
                         <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
                             <span className="text-gray-800 font-bold">최종 {mode === 'buy' ? '결제' : '입금'} 예정액</span>
-                            <span className="text-2xl font-extrabold text-blue-600">{calcFee.final.toLocaleString()}권</span>
+                            <span className="text-2xl font-extrabold text-blue-600">{calcFee.final.toLocaleString()}원</span>
                         </div>
                         <div className="text-[10px] text-gray-400 text-center">
                             * 소수점 정산 원칙: 매수 시 올림, 매도 시 버림 정산됩니다.
@@ -821,7 +832,7 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
                 )}
 
                 <div className="text-gray-500 mb-2">{stock.name}</div>
-                <div className="text-3xl font-bold mb-8">{Math.round(stock.currentPrice).toLocaleString()}권</div>
+                <div className="text-3xl font-bold mb-8">{Math.round(stock.currentPrice).toLocaleString()}원</div>
                 
                 <div className="flex items-center gap-6 mb-8">
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 rounded-full bg-gray-100 active:bg-gray-200"><MinusIcon className="w-6 h-6"/></button>
@@ -830,31 +841,32 @@ const StockTransactionModal: React.FC<{ mode: 'buy'|'sell', stock: StockProduct,
                 </div>
 
                 <div className="w-full max-w-xs space-y-4">
-                    {mode === 'buy' ? (
-                        <div className="text-center p-4 bg-gray-50 rounded-xl">
-                            <div className="text-sm text-gray-500 mb-1">총 구매 예정 금액</div>
-                            <div className="text-2xl font-bold">{(Math.ceil(stock.currentPrice * quantity)).toLocaleString()}권</div>
-                            <div className="text-[10px] text-indigo-600 mt-1">* 소수점 올림 정산 적용</div>
+                    <div className="p-4 bg-gray-50 rounded-xl space-y-2">
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">{mode === 'buy' ? '매수' : '매도'} 예상 체결가</span>
+                            <span className={`font-bold ${mode === 'buy' ? 'text-green-600' : 'text-red-600'}`}>{calcFee.execPrice.toFixed(2)}원</span>
                         </div>
-                    ) : (
-                        <div className="p-4 bg-gray-50 rounded-xl space-y-2">
-                             <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">매도 예상 체결가</span>
-                                <span className="font-bold text-red-600">{calcFee.execPrice.toFixed(2)}권</span>
-                            </div>
-                             <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">예상 수수료율</span>
-                                <span className={`font-bold ${calcFee.rate > 5 ? 'text-red-600' : 'text-gray-800'}`}>{calcFee.rate}%</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">예상 수수료 금액</span>
-                                <span className="font-bold text-red-500">{calcFee.amount.toLocaleString()}권</span>
-                            </div>
-                             <div className="flex justify-between pt-2 border-t border-gray-200">
-                                <span className="font-bold text-gray-800">최종 입금 예정액</span>
-                                <span className="font-bold text-blue-600">{calcFee.final.toLocaleString()}권</span>
-                            </div>
+                        {mode === 'sell' && (
+                            <>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">예상 수수료율</span>
+                                    <span className={`font-bold ${calcFee.rate > 5 ? 'text-red-600' : 'text-gray-800'}`}>{calcFee.rate}%</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">예상 수수료 금액</span>
+                                    <span className="font-bold text-red-500">{calcFee.amount.toLocaleString()}원</span>
+                                </div>
+                            </>
+                        )}
+                        <div className="flex justify-between pt-2 border-t border-gray-200">
+                            <span className="font-bold text-gray-800">최종 {mode === 'buy' ? '결제' : '입금'} 예정액</span>
+                            <span className={`font-bold ${mode === 'buy' ? 'text-red-600' : 'text-blue-600'}`}>{calcFee.final.toLocaleString()}원</span>
                         </div>
+                    </div>
+                    {mode === 'buy' && (
+                        <p className="text-[10px] text-gray-400 text-center leading-tight">
+                            * 대량 매수 시 시장가가 상승하여 체결가가 현재가보다 높을 수 있습니다.
+                        </p>
                     )}
                 </div>
 
@@ -884,9 +896,11 @@ const SavingsView: React.FC<{ currentUser: User, refreshAccount: () => void, sho
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const prodList = await api.getSavingsProducts();
+            const [prodList, myList] = await Promise.all([
+                api.getSavingsProducts(),
+                api.getStudentSavings(currentUser.userId)
+            ]);
             setProducts(prodList);
-            const myList = await api.getStudentSavings(currentUser.userId);
             setMySavings(myList);
         } catch (error) {
             console.error("Failed to fetch savings data", error);
@@ -969,7 +983,7 @@ const SavingsView: React.FC<{ currentUser: User, refreshAccount: () => void, sho
                                     <div className="grid grid-cols-2 gap-y-4 gap-x-6">
                                         <div className="flex flex-col">
                                             <span className="text-xs text-gray-400 mb-1 font-medium">가입 원금</span>
-                                            <span className="font-bold text-gray-800 text-lg">{s.amount.toLocaleString()}<span className="text-xs font-normal ml-0.5">권</span></span>
+                                            <span className="font-bold text-gray-800 text-lg">{s.amount.toLocaleString()}<span className="text-xs font-normal ml-0.5">원</span></span>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-xs text-gray-400 mb-1 font-medium">만기 예정일</span>
@@ -977,11 +991,11 @@ const SavingsView: React.FC<{ currentUser: User, refreshAccount: () => void, sho
                                         </div>
                                         <div className="flex flex-col p-3 bg-indigo-50 rounded-xl">
                                             <span className="text-[10px] text-indigo-400 mb-1 font-bold">만기 시 예상 이자 (+{(rate * 100).toFixed(0)}%)</span>
-                                            <span className="font-extrabold text-indigo-600 text-base">+{maturityInterest.toLocaleString()}<span className="text-[10px] font-normal ml-0.5 text-indigo-400">권</span></span>
+                                            <span className="font-extrabold text-indigo-600 text-base">+{maturityInterest.toLocaleString()}<span className="text-[10px] font-normal ml-0.5 text-indigo-400">원</span></span>
                                         </div>
                                         <div className="flex flex-col p-3 bg-red-50 rounded-xl">
                                             <span className="text-[10px] text-red-400 mb-1 font-bold">중도 해지 시 환급액 ({(cancelRate * 100).toFixed(0)}%)</span>
-                                            <span className="font-extrabold text-red-600 text-base">{cancelRefund.toLocaleString()}<span className="text-[10px] font-normal ml-0.5 text-red-400">권</span></span>
+                                            <span className="font-extrabold text-red-600 text-base">{cancelRefund.toLocaleString()}<span className="text-[10px] font-normal ml-0.5 text-red-400">원</span></span>
                                             <span className={`text-[9px] mt-1 font-bold ${canCancel ? 'text-green-500' : 'text-red-400'}`}>
                                                 {canCancel ? '✓ 현재 해지 가능' : `🔒 해지 가능일: ${possibleDateStr} 이후`}
                                             </span>
@@ -1086,7 +1100,7 @@ const FundView: React.FC<{ currentUser: User, refreshAccount: () => void, showNo
                                 </div>
                                 <div className="flex justify-between text-sm text-gray-600 mb-1">
                                     <span>투자 금액</span>
-                                    <span className="font-bold">{(inv.units * (inv.fund?.unitPrice || 0)).toLocaleString()}권</span>
+                                    <span className="font-bold">{(inv.units * (inv.fund?.unitPrice || 0)).toLocaleString()}원</span>
                                 </div>
                             </div>
                         ))}
@@ -1178,7 +1192,7 @@ const JoinSavingsModal: React.FC<{ product: SavingsProduct, onClose: ()=>void, o
                     type="number" 
                     value={amount} 
                     onChange={e => setAmount(e.target.value)} 
-                    placeholder={`최대 ${product.maxAmount}권`}
+                    placeholder={`최대 ${product.maxAmount}원`}
                     className="w-full p-3 border rounded-lg mb-4"
                 />
                 <button 

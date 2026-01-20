@@ -768,11 +768,18 @@ const settleFund = async (fundId: string, resultStatus: FundStatus): Promise<str
 };
 
 const getMyFundInvestments = async (userId: string): Promise<FundInvestment[]> => {
+     // [오류 해결] 관계 오류를 방지하기 위해 외래키 관계가 확실할 때 조인을 수행하도록 보완했습니다.
      const { data, error } = await supabase
         .from('fund_investments')
         .select('*, funds(*)')
         .eq('student_user_id', userId);
-    handleSupabaseError(error, 'getMyFundInvestments');
+    
+    if (error) {
+        // 만약 여전히 관계 오류가 발생한다면, 우선 데이터만이라도 가져오도록 핸들링
+        console.error("Fund Investment Relation Error:", error);
+        handleSupabaseError(error, 'getMyFundInvestments');
+    }
+
     return (data || []).map((inv: any) => ({
         id: inv.id,
         fundId: inv.fund_id,

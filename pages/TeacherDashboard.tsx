@@ -215,7 +215,7 @@ const DashboardView: React.FC<{ students: (User & { account: Account | null })[]
                                         id: `large-tx-${t.transactionId}`,
                                         type: 'info',
                                         category: '고액거래',
-                                        message: `${s.name} 학생: ${Math.abs(t.amount).toLocaleString()}권 고액 거래 발생 (${t.description})`,
+                                        message: `${s.name} 학생: ${Math.abs(t.amount).toLocaleString()}원 고액 거래 발생 (${t.description})`,
                                         date: new Date(t.date)
                                     });
                                 }
@@ -299,19 +299,19 @@ const DashboardView: React.FC<{ students: (User & { account: Account | null })[]
              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div onClick={() => { setVisibleHistoryModalTxns(10); setShowHistoryModal(true); }} className="bg-[#2B548F] text-white p-6 rounded-xl shadow-lg cursor-pointer hover:bg-[#234576] transition-colors relative overflow-hidden group">
                     <div className="relative z-10">
-                        <h3 className="font-medium text-blue-200 text-sm mb-1">권쌤 지갑 (국고)</h3>
-                        <p className="text-3xl font-bold">{teacherAccount?.balance.toLocaleString() ?? 0}권</p>
+                        <h3 className="font-medium text-blue-200 text-sm mb-1">민현쌤 지갑 (국고)</h3>
+                        <p className="text-3xl font-bold">{teacherAccount?.balance.toLocaleString() ?? 0}원</p>
                         <p className="text-xs text-blue-200 mt-2 flex items-center">내역 보기 <span className="ml-1">→</span></p>
                     </div>
                     <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-110 transition-transform"></div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm">
                     <h3 className="text-gray-500 font-medium text-sm">총 통화량 (학생)</h3>
-                    <p className="text-3xl font-bold text-indigo-600 mt-2">{totalAssets.toLocaleString()}권</p>
+                    <p className="text-3xl font-bold text-indigo-600 mt-2">{totalAssets.toLocaleString()}원</p>
                 </div>
                  <div className="bg-white p-6 rounded-xl shadow-sm">
                     <h3 className="text-gray-500 font-medium text-sm">평균 자산</h3>
-                    <p className="text-3xl font-bold text-green-600 mt-2">{avgAssets.toLocaleString()}권</p>
+                    <p className="text-3xl font-bold text-green-600 mt-2">{avgAssets.toLocaleString()}원</p>
                 </div>
                  <div className="bg-white p-6 rounded-xl shadow-sm">
                     <h3 className="text-gray-500 font-medium text-sm">등록 학생</h3>
@@ -385,7 +385,7 @@ const DashboardView: React.FC<{ students: (User & { account: Account | null })[]
                                      </div>
                                  </div>
                                  <div className="text-right">
-                                    <span className="block font-mono font-bold text-indigo-600">{(s.account?.balance || 0).toLocaleString()}권</span>
+                                    <span className="block font-mono font-bold text-indigo-600">{(s.account?.balance || 0).toLocaleString()}원</span>
                                     <span className="text-[10px] text-gray-400">활동 {studentActivities[s.userId] || 0}회</span>
                                  </div>
                              </li>
@@ -438,7 +438,7 @@ const DashboardView: React.FC<{ students: (User & { account: Account | null })[]
                     <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm md:max-w-4xl max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-4 border-b pb-3">
                             <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                                <ManageIcon className="w-5 h-5 mr-2 text-[#2B548F]"/> 권쌤 지갑 내역 (국고)
+                                <ManageIcon className="w-5 h-5 mr-2 text-[#2B548F]"/> 민현쌤 지갑 내역 (국고)
                             </h3>
                             <button onClick={() => setShowHistoryModal(false)} className="p-1 rounded-full hover:bg-gray-200 transition-colors">
                                 <XIcon className="w-6 h-6 text-gray-400" />
@@ -455,7 +455,7 @@ const DashboardView: React.FC<{ students: (User & { account: Account | null })[]
                                                     <p className="text-xs text-gray-400 mt-1">{new Date(t.date).toLocaleString()}</p>
                                                 </div>
                                                 <p className={`font-extrabold text-base ${t.amount > 0 ? 'text-blue-600' : 'text-red-500'}`}>
-                                                    {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()}<span className="text-xs ml-0.5 font-normal">권</span>
+                                                    {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()}<span className="text-xs ml-0.5 font-normal">원</span>
                                                 </p>
                                             </li>
                                         ))}
@@ -956,7 +956,7 @@ const JobManagementView: React.FC<{ refresh: () => void }> = ({ refresh }) => {
                         <div className="bg-gray-50 p-3 rounded-lg text-sm mb-3 space-y-2">
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-500">기본 월급</span>
-                                <span className="font-bold">{job.salary.toLocaleString()}권</span>
+                                <span className="font-bold">{job.salary.toLocaleString()}원</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-500">인센티브</span>
@@ -969,7 +969,7 @@ const JobManagementView: React.FC<{ refresh: () => void }> = ({ refresh }) => {
                             </div>
                             <div className="border-t pt-2 flex justify-between items-center font-bold text-indigo-600">
                                 <span>총 지급액</span>
-                                <span>{(job.salary + (job.incentive || 0)).toLocaleString()}권</span>
+                                <span>{(job.salary + (job.incentive || 0)).toLocaleString()}원</span>
                             </div>
                         </div>
                         <div className="mt-auto">
@@ -1145,7 +1145,7 @@ const TaxView: React.FC<{ students: User[] }> = ({ students }) => {
                                     <p className="text-sm text-gray-500">납부 기한: {new Date(tax.dueDate).toLocaleDateString()}</p>
                                 </div>
                                 <div className="text-right">
-                                    <span className="block font-bold text-lg text-red-600">{tax.amount.toLocaleString()}권</span>
+                                    <span className="block font-bold text-lg text-red-600">{tax.amount.toLocaleString()}원</span>
                                     <button onClick={() => setConfirmAction({ type: 'delete', data: tax.id })} className="text-xs text-gray-400 hover:text-red-500 underline mt-1">삭제</button>
                                 </div>
                             </div>
@@ -1358,15 +1358,15 @@ const FundManagementView: React.FC<{ students: (User & { account: Account | null
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-500">투자 단위</span>
-                                <span className="font-medium">{fund.unitPrice.toLocaleString()}권</span>
+                                <span className="font-medium">{fund.unitPrice.toLocaleString()}원</span>
                             </div>
                              <div className="flex justify-between">
                                 <span className="text-gray-500">현재 모집액</span>
-                                <span className="font-bold text-green-600">{(fund.totalInvestedAmount || 0).toLocaleString()}권</span>
+                                <span className="font-bold text-green-600">{(fund.totalInvestedAmount || 0).toLocaleString()}원</span>
                             </div>
                              <div className="mt-2 pt-2 border-t text-xs text-gray-500">
-                                <p>성공 시: {fund.baseReward.toLocaleString()}권 추가 지급</p>
-                                <p>초과 달성 시: {(fund.baseReward + fund.incentiveReward).toLocaleString()}권 추가 지급</p>
+                                <p>성공 시: {fund.baseReward.toLocaleString()}원 추가 지급</p>
+                                <p>초과 달성 시: {(fund.baseReward + fund.incentiveReward).toLocaleString()}원 추가 지급</p>
                             </div>
                         </div>
                         {fund.status === FundStatus.ONGOING && (
@@ -1471,14 +1471,14 @@ const AddFundModal: React.FC<{ students: (User & { account: Account | null })[],
                             <label className="block font-semibold mb-1">1좌당 투자금액</label>
                             <div className="relative">
                                 <input type="number" name="unitPrice" value={formData.unitPrice} onChange={handleChange} className="w-full p-2 border rounded pr-6" placeholder="1000"/>
-                                <span className="absolute right-2 top-2 text-gray-400">권</span>
+                                <span className="absolute right-2 top-2 text-gray-400">원</span>
                             </div>
                         </div>
                         <div>
                             <label className="block font-semibold mb-1">목표 모집금액</label>
                             <div className="relative">
                                 <input type="number" name="targetAmount" value={formData.targetAmount} onChange={handleChange} className="w-full p-2 border rounded pr-6" placeholder="100000"/>
-                                <span className="absolute right-2 top-2 text-gray-400">권</span>
+                                <span className="absolute right-2 top-2 text-gray-400">원</span>
                             </div>
                         </div>
                     </div>
@@ -1488,14 +1488,14 @@ const AddFundModal: React.FC<{ students: (User & { account: Account | null })[],
                             <label className="block font-semibold mb-1">기본 성공 보상 (좌당)</label>
                             <div className="relative">
                                 <input type="number" name="baseReward" value={formData.baseReward} onChange={handleChange} className="w-full p-2 border rounded pr-6 text-blue-600 font-bold" placeholder="100"/>
-                                <span className="absolute right-2 top-2 text-gray-400">권</span>
+                                <span className="absolute right-2 top-2 text-gray-400">원</span>
                             </div>
                         </div>
                         <div>
                             <label className="block font-semibold mb-1">초과 달성 보상 (좌당)</label>
                             <div className="relative">
                                 <input type="number" name="incentiveReward" value={formData.incentiveReward} onChange={handleChange} className="w-full p-2 border rounded pr-6 text-purple-600 font-bold" placeholder="200"/>
-                                <span className="absolute right-2 top-2 text-gray-400">권</span>
+                                <span className="absolute right-2 top-2 text-gray-400">원</span>
                             </div>
                         </div>
                     </div>

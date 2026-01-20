@@ -219,7 +219,7 @@ const PosView: React.FC<{currentUser: User | null}> = ({currentUser}) => {
                         <StudentIcon className="w-8 h-8 text-gray-500 mb-2" />
                         <span className="font-bold text-gray-800 text-sm">{s.name}</span>
                         <span className="font-mono text-gray-500 text-xs mt-1">
-                            {(s.account?.balance ?? 0).toLocaleString()}권
+                            {(s.account?.balance ?? 0).toLocaleString()}원
                         </span>
                     </button>
                 ))}
@@ -260,7 +260,7 @@ const PaymentView: React.FC<{
                 </button>
                 <div className="text-right">
                     <p className="font-bold text-lg">{student.name}</p>
-                    <p className="text-sm text-gray-500">잔액: {(student.account?.balance ?? 0).toLocaleString()}권</p>
+                    <p className="text-sm text-gray-500">잔액: {(student.account?.balance ?? 0).toLocaleString()}원</p>
                 </div>
             </div>
 
@@ -268,7 +268,7 @@ const PaymentView: React.FC<{
                 <div className="flex-grow flex items-center justify-center text-center p-4">
                      <p className="text-5xl font-mono font-bold tracking-tight text-gray-800 break-all sm:text-6xl">
                         {parseInt(amount || '0').toLocaleString()}
-                        <span className="text-3xl ml-2 font-sans font-medium">권</span>
+                        <span className="text-3xl ml-2 font-sans font-medium">원</span>
                      </p>
                 </div>
                 
@@ -326,7 +326,7 @@ const TransferView: React.FC<{ martAccount: Account, refreshAccount: () => void 
         try {
             let message = '';
             if (target === 'student') {
-                const fullAccountId = `권쌤은행 ${accountId}`;
+                const fullAccountId = `민현쌤은행 ${accountId}`;
                 if (!accountId) throw new Error('계좌번호를 입력해주세요.');
 
                 message = await api.martTransfer(fullAccountId, parseInt(amount), 'TO_STUDENT');
@@ -363,7 +363,7 @@ const TransferView: React.FC<{ martAccount: Account, refreshAccount: () => void 
                 <h2 className="text-2xl font-bold mb-4">송금하기</h2>
                 <div className="mb-4">
                     <p className="text-sm text-gray-500">마트 계좌 잔액</p>
-                    <p className="text-2xl font-bold">{martAccount.balance.toLocaleString()}권</p>
+                    <p className="text-2xl font-bold">{martAccount.balance.toLocaleString()}원</p>
                 </div>
 
                 <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
@@ -377,7 +377,7 @@ const TransferView: React.FC<{ martAccount: Account, refreshAccount: () => void 
                         onClick={() => { setTarget('teacher'); }}
                         className={`flex-1 py-2 text-sm font-bold rounded-md transition-colors ${target === 'teacher' ? 'bg-white shadow text-[#2B548F]' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        권쌤(국고)에게 송금
+                        민현쌤(국고)에게 송금
                     </button>
                 </div>
 
@@ -386,7 +386,7 @@ const TransferView: React.FC<{ martAccount: Account, refreshAccount: () => void 
                         <div>
                             <label className="font-semibold text-gray-700">받는 학생 계좌번호</label>
                             <div className="flex items-center mt-1">
-                                <span className="p-3 bg-gray-100 border border-r-0 rounded-l-lg text-gray-600 w-2/3 text-center">권쌤은행</span>
+                                <span className="p-3 bg-gray-100 border border-r-0 rounded-l-lg text-gray-600 w-2/3 text-center">민현쌤은행</span>
                                 <input type="text" value={accountId} onChange={e => setAccountId(e.target.value)} placeholder="000-000" className="w-1/3 p-3 border rounded-r-lg" />
                             </div>
                         </div>
@@ -395,7 +395,7 @@ const TransferView: React.FC<{ martAccount: Account, refreshAccount: () => void 
                             <label className="font-semibold text-gray-700">받는 분</label>
                             <div className="mt-1 p-3 bg-gray-50 border rounded-lg text-gray-800 font-bold flex items-center">
                                 <span className="bg-[#2B548F] text-white text-xs px-2 py-1 rounded mr-2">국고</span>
-                                권쌤
+                                민현쌤
                             </div>
                         </div>
                     )}
@@ -456,7 +456,7 @@ const HistoryView: React.FC<{ martAccount: Account }> = ({ martAccount }) => {
                                 <p className="text-sm text-gray-500">{new Date(t.date).toLocaleString()}</p>
                             </div>
                             <p className={`font-bold ${t.amount > 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                                {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()}권
+                                {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()}원
                             </p>
                         </li>
                     ))}

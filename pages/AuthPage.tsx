@@ -309,7 +309,7 @@ const AuthPage: React.FC = () => {
                 {/* Title Section: Mobile Landscape (smaller margin/text) vs Tablet Landscape (larger) */}
                 <div className="text-center mb-6 landscape:mb-2 md:landscape:mb-8">
                     <h1 className="text-6xl font-extrabold text-gray-800 tracking-tight landscape:text-4xl md:landscape:text-7xl" style={{textShadow: '2px 2px 4px rgba(255,255,255,0.5)', fontFamily: "'Gamja Flower', cursive"}}>Class Bank</h1>
-                    <p className="text-2xl font-medium text-gray-800 mt-4 landscape:mt-1 landscape:text-xl md:landscape:mt-4 md:landscape:text-3xl" style={{ fontFamily: "'Gamja Flower', cursive", textShadow: '1px 1px 2px rgba(255,255,255,0.5)' }}>권쌤과 경제활동</p>
+                    <p className="text-2xl font-medium text-gray-800 mt-4 landscape:mt-1 landscape:text-xl md:landscape:mt-4 md:landscape:text-3xl" style={{ fontFamily: "'Gamja Flower', cursive", textShadow: '1px 1px 2px rgba(255,255,255,0.5)' }}>민현쌤과 경제활동</p>
                 </div>
 
                 {/* 

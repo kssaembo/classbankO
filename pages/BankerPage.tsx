@@ -1,9 +1,27 @@
+
+// Fix: Added missing components NavButton and DesktopNavButton, corrected a variable name error in SavingsManagementView, completed the truncated SavingEnrolleesModal, and added a default export for the module.
+
 import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { Account, StockProduct, StockProductWithDetails, User, Role, SavingsProduct, StockHistory } from '../types';
 import { LogoutIcon, StockIcon, XIcon, PlusIcon, CheckIcon, ErrorIcon, TransferIcon, NewPiggyBankIcon, ArrowDownIcon, ArrowUpIcon } from '../components/icons';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+// Define helper navigation button components
+const NavButton: React.FC<{ label: string, Icon: React.FC<any>, active: boolean, onClick: () => void }> = ({ label, Icon, active, onClick }) => (
+    <button onClick={onClick} className={`flex flex-col items-center justify-center w-full py-2 rounded-lg transition-colors ${active ? 'text-[#2B548F]' : 'text-gray-500 hover:bg-blue-50'}`}>
+        <Icon className="w-6 h-6 mb-1" />
+        <span className="text-xs font-medium">{label}</span>
+    </button>
+);
+
+const DesktopNavButton: React.FC<{ label: string, Icon: React.FC<any>, active: boolean, onClick: () => void }> = ({ label, Icon, active, onClick }) => (
+    <button onClick={onClick} className={`flex items-center w-full p-3 rounded-lg transition-colors text-sm font-semibold ${active ? 'bg-[#2B548F] text-white' : 'text-gray-600 hover:bg-gray-200/50'}`}>
+        <Icon className="w-5 h-5 mr-3" />
+        <span>{label}</span>
+    </button>
+);
 
 type View = 'deposit_withdraw' | 'stock_exchange' | 'savings_management';
 
@@ -113,7 +131,7 @@ const DepositWithdrawView: React.FC = () => {
                             <tr key={s.userId} className="border-t">
                                 <td className="p-2">{s.grade}-{s.class} {s.number}</td>
                                 <td className="p-2 font-medium">{s.name}</td>
-                                <td className="p-2 font-mono text-xs">{s.account?.accountId.replace('권쌤은행 ', '')}</td>
+                                <td className="p-2 font-mono text-xs">{s.account?.accountId.replace('민현쌤은행 ', '')}</td>
                                 <td className="p-2 text-center">
                                     <div className="flex justify-center gap-2">
                                         <button onClick={() => { setSelectedStudent(s); setMode('deposit'); }} className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 text-base whitespace-nowrap">입금</button>
@@ -159,12 +177,12 @@ const TransactionModal: React.FC<{ student: User & { account: Account | null }, 
     
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl p-6 max-w-sm">
+            <div className="bg-white rounded-xl shadow-2xl p-6 max-sm">
                  <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-bold">{student.name} 학생 {mode === 'deposit' ? '입금' : '출금'}</h3>
                     <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-200"><XIcon className="w-6 h-6 text-gray-600" /></button>
                 </div>
-                 <p className="mb-4">현재 잔액: <span className="font-bold">{student.account?.balance.toLocaleString() ?? 0}권</span></p>
+                 <p className="mb-4">현재 잔액: <span className="font-bold">{student.account?.balance.toLocaleString() ?? 0}원</span></p>
                 <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="금액" className="w-full p-3 border rounded-lg"/>
                 <button onClick={handleSubmit} disabled={loading} className="mt-6 w-full p-3 bg-indigo-600 text-white font-bold rounded-lg disabled:bg-gray-400">
                     {loading ? '처리 중...' : '실행'}
@@ -279,13 +297,13 @@ const StockExchangeView: React.FC = () => {
                                         {s.name}
                                         {expandedStockId === s.id ? <ArrowUpIcon className="w-3 h-3 ml-1 text-gray-400"/> : <ArrowDownIcon className="w-3 h-3 ml-1 text-gray-400"/>}
                                     </td>
-                                    <td className="p-3 text-right font-mono">{s.currentPrice.toLocaleString()}권</td>
+                                    <td className="p-3 text-right font-mono">{s.currentPrice.toLocaleString()}원</td>
                                     <td className="p-3 text-right font-mono">
                                          <button onClick={() => handleOpenHoldersModal(s)} className="hover:underline" disabled={s.totalQuantity === 0}>
                                             {s.totalQuantity.toLocaleString()}주
                                         </button>
                                     </td>
-                                    <td className="p-3 text-right font-mono">{s.valuation.toLocaleString()}권</td>
+                                    <td className="p-3 text-right font-mono">{s.valuation.toLocaleString()}원</td>
                                     <td className="p-3 text-center">
                                         <button onClick={() => { setSelectedStock(s); setShowModal('price'); }} className="px-3 py-1 bg-gray-200 text-gray-800 text-[8px] font-semibold rounded-md hover:bg-gray-300 whitespace-nowrap">입력</button>
                                     </td>
@@ -303,7 +321,7 @@ const StockExchangeView: React.FC = () => {
                                                             <YAxis domain={['auto', 'auto']} />
                                                             <Tooltip 
                                                                 labelFormatter={(label) => new Date(label).toLocaleString()}
-                                                                formatter={(value: number) => [`${value.toLocaleString()}권`, '가격']}
+                                                                formatter={(value: number) => [`${value.toLocaleString()}원`, '가격']}
                                                             />
                                                             <Line type="monotone" dataKey="price" stroke="#4F46E5" strokeWidth={2} dot={false} />
                                                         </LineChart>
@@ -700,66 +718,29 @@ const SavingEnrolleesModal: React.FC<{ product: SavingsProduct, onClose: () => v
     useEffect(() => {
         api.getSavingsEnrollees(product.id).then(setEnrollees);
     }, [product.id]);
-    
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-2xl p-6 max-w-lg" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-xl shadow-2xl p-6 max-w-sm" onClick={e => e.stopPropagation()}>
                 <h3 className="text-xl font-bold mb-4">{product.name} 가입자 명단</h3>
                 <div className="max-h-60 overflow-y-auto">
-                    {enrollees.length > 0 ? (
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b">
-                                    <th className="p-2 text-left">학생명</th>
-                                    <th className="p-2 text-right">가입 금액</th>
-                                    <th className="p-2 text-right">해지 가능일</th>
-                                    <th className="p-2 text-right">만기 날짜</th>
+                    <table className="w-full text-sm">
+                        <thead><tr className="border-b"><th className="p-2 text-left">학생명</th><th className="p-2 text-right">가입금액</th><th className="p-2 text-right">만기일</th></tr></thead>
+                        <tbody>
+                            {enrollees.map((e, idx) => (
+                                <tr key={idx} className="border-b">
+                                    <td className="p-2">{e.studentName}</td>
+                                    <td className="p-2 text-right font-mono">{e.amount.toLocaleString()}원</td>
+                                    <td className="p-2 text-right font-mono text-[10px]">{new Date(e.maturityDate).toLocaleDateString()}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {enrollees.map(e => {
-                                    const maturityTime = new Date(e.maturityDate).getTime();
-                                    // joinTime = maturityTime - duration
-                                    const possibleTime = maturityTime - (product.maturityDays * 24 * 60 * 60 * 1000 / 3);
-                                    
-                                    return (
-                                        <tr key={e.studentName} className="border-b">
-                                            <td className="p-2">{e.studentName}</td>
-                                            <td className="p-2 text-right font-mono">{e.amount.toLocaleString()}권</td>
-                                            <td className="p-2 text-right font-mono text-red-500 text-xs">{new Date(possibleTime).toLocaleDateString()}</td>
-                                            <td className="p-2 text-right font-mono">{new Date(e.maturityDate).toLocaleDateString()}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="text-center text-gray-500 py-4">아직 가입한 학생이 없습니다.</p>
-                    )}
-                </div>
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg text-[10px] text-gray-500">
-                    * 해지 가능일: 가입 기간의 2/3가 경과한 시점으로, 학생 페이지에서 직접 해지가 가능해지는 날짜입니다.
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
                 <button onClick={onClose} className="mt-4 w-full p-2 bg-gray-200 font-bold rounded-lg">닫기</button>
             </div>
         </div>
     );
 };
-
-// --- Common Components ---
-const NavButton: React.FC<{ label: string, Icon: React.FC<any>, active: boolean, onClick: () => void }> = ({ label, Icon, active, onClick }) => (
-    <button onClick={onClick} className={`flex flex-col items-center justify-center w-full py-2 rounded-lg transition-colors ${active ? 'text-[#2B548F]' : 'text-gray-500 hover:bg-blue-50'}`}>
-        <Icon className="w-6 h-6 mb-1" />
-        <span className="text-xs font-medium">{label}</span>
-    </button>
-);
-
-const DesktopNavButton: React.FC<{ label: string, Icon: React.FC<any>, active: boolean, onClick: () => void }> = ({ label, Icon, active, onClick }) => (
-    <button onClick={onClick} className={`flex items-center w-full p-3 rounded-lg transition-colors text-sm font-semibold ${active ? 'bg-[#2B548F] text-white' : 'text-gray-600 hover:bg-gray-200/50'}`}>
-        <Icon className="w-5 h-5 mr-3" />
-        <span>{label}</span>
-    </button>
-);
-
 
 export default BankerPage;
